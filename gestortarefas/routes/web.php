@@ -14,18 +14,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/', function () {
-    // echo "Gestor de tarefas";
-    //----------------------------------------------------
-    try {
-        //Testar conexão com o banco de dados
-        DB::connection()->getPdo();
-        echo "Conexão com o banco de dados estabelecida com sucesso." . DB::connection()->getDatabaseName();
-    } catch (\Exception $e) {
-        die("Não possível conectar ao banco de dados. Erro: " . $e->getMessage());
-    }
-});
-
 // Route::get('/main',[nomeController::class,'metodo']);
-Route::get('/main',[Main::class,'index']);
+// Route::get('/main',[Main::class,'index']);
+Route::get('/',[Main::class,'index'])->name('index');
+
+// login routes
+Route::get("/login",[Main::class,'login'])->name('login');
+Route::post("/login_submit",[Main::class,'login_submit'])->name('login_submit');
+
+// main page
+Route::get("/main",[Main::class,'main'])->name('main');
+

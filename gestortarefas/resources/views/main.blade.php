@@ -1,12 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title }}</title>
-</head>
-<body>
-    <h1>Blade - Laravel</h1>
-    <p>{{ $description }}</p>
-</body>
-</html>
+@extends('templates/main_layout')
+
+@section('content')
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h4>Tarefas</h4>
+            <hr>
+
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="w-50">Tarefas</th>
+                        <th class="w-25 text-center">Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <p class="text-center opacity-50 my-3">Não existem tarefas registradas</p>
+        </div>
+    </div>
+</div>
+@endsection
