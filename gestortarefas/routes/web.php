@@ -16,12 +16,16 @@ use Illuminate\Support\Facades\Route;
 */
 // Route::get('/main',[nomeController::class,'metodo']);
 // Route::get('/main',[Main::class,'index']);
-Route::get('/',[Main::class,'index'])->name('index');
 
-// login routes
-Route::get("/login",[Main::class,'login'])->name('login');
-Route::post("/login_submit",[Main::class,'login_submit'])->name('login_submit');
+// route with middleware
+Route::middleware("CheckLogout")->group(function () {
+    Route::get("/login", [Main::class, 'login'])->name('login');
+    Route::post("/login_submit", [Main::class, 'login_submit'])->name('login_submit');
+});
 
-// main page
-Route::get("/main",[Main::class,'main'])->name('main');
 
+// Grupo de rotas protegidas - só podem ser acessadas se o usuário estiver logado
+Route::middleware("CheckLogin")->group(function () {
+    Route::get("/", [Main::class, 'index'])->name('index');
+    Route::get("/logout", [Main::class, 'logout'])->name('logout');
+});
