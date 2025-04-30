@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\TaskModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\VarDumper\VarDumper;
 
 class Main extends Controller
 {
@@ -145,6 +147,37 @@ class Main extends Controller
     }
 
     //==========================================================
+    // edit task
+    //==========================================================
+
+    public function edit_task($id){
+        try{
+            $id = Crypt::decrypt($id);
+        }catch(\Exception $e){
+            return redirect()->route('index');
+        }
+
+        // get task data
+        $model = new TaskModel();
+        $task = $model->where('id', '=', $id)->first();
+
+        if(empty($task)){
+            return redirect()->route('index');
+        }
+        $data = [
+            'title' => 'Editar tarefa',
+            'task' => $task,
+        ];
+        return view('edit_task_frm', $data);
+    }
+
+    public function edit_task_submit(Request $request){
+        echo '<pre>';
+        print_r($request->all());
+        echo '</pre>';
+    }
+
+    //==========================================================
     // private methods
     //==========================================================
     private function _get_tasks(){
@@ -157,8 +190,8 @@ class Main extends Controller
 
         foreach($tasks as $task){
 
-            $link_edit = '<a href="'.route('edit_task',['id' => $task->id]).'" class="btn btn-secondary m-1"><i class="bi bi-pencil-square me-2"></i></a>';
-            $link_delete = '<a href="'.route('delete_task',['id' => $task->id]).'" class="btn btn-secondary m-1"><i class="bi bi-trash me-2"></i></a>';
+            $link_edit = '<a href="'.route('edit_task',['id' => Crypt::encrypt($task->id)]).'" class="btn btn-secondary m-1"><i class="bi bi-pencil-square me-2"></i></a>';
+            $link_delete = '<a href="'.route('delete_task',['id' => Crypt::encrypt($task->id)]).'" class="btn btn-secondary m-1"><i class="bi bi-trash me-2"></i></a>';
             $collection[] = [
                 'task_name' => $task->task_name,
                 'task_status' => $this->_status_name($task->task_status),
