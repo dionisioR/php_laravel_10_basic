@@ -172,9 +172,58 @@ class Main extends Controller
     }
 
     public function edit_task_submit(Request $request){
-        echo '<pre>';
-        print_r($request->all());
-        echo '</pre>';
+      // form validation
+        $request->validate([
+            'text_task_name' => 'required|min:3|max:200',
+            'text_task_description' => 'required|min:3|max:1000',
+            'text_task_status' => 'required',
+        ], [
+            'text_task_name.required' => 'O campo nome da tarefa é obrigatório',
+            'text_task_name.min' => 'O campo nome da tarefa deve ter no mínimo :min caracteres',
+            'text_task_name.max' => 'O campo nome da tarefa deve ter no máximo :max caracteres',
+            'text_task_description.required' => 'O campo descrição da tarefa é obrigatório',
+            'text_task_description.min' => 'O campo descrição da tarefa deve ter no mínimo :min caracteres',
+            'text_task_description.max' => 'O campo descrição da tarefa deve ter no máximo :max caracteres',
+            'text_task_status.required' => 'O campo status da tarefa é obrigatório',
+        ]);
+
+        // get form data
+        $id_task = null;
+        try{
+            $id_task = Crypt::decrypt($request->input('task_id'));
+        }catch(\Exception $e){
+            return redirect()->route('index');
+        }
+        $task_name = $request->input('text_task_name');
+        $task_description = $request->input('text_task_description');
+        $task_status = $request->input('text_task_status');
+
+        //check if there is another task with the same anme and from the same user
+        $model = new TaskModel();
+        $task = $model->where('id_user', '=', session('id'))
+                      ->where('task_name', '=', $task_name)
+                      ->where('id', '!=', $id_task)
+                      ->whereNull('deleted_at')
+                      ->first();
+        // se existir, retorna erro
+        if($task){
+            return redirect()
+                ->route('edit_task', ['id' => Crypt::encrypt($id_task)])
+                ->with('task_error', 'Já existe uma tarefa com esse nome');
+        }
+        
+        // update task
+        $model->Where('id', '=', $id_task)
+              ->update([
+                  'task_name' => $task_name,
+                  'task_description' => $task_description,
+                  'task_status' => $task_status,
+                  'updated_at' => date('Y-m-d H:i:s'),
+              ]);
+        // redirect to index page
+        return redirect()
+            ->route('index');        
+       
     }
 
     //==========================================================

@@ -8,9 +8,9 @@
             <hr>
             <form action="{{ route('edit_task_submit')}}" method="post">
                 @csrf
-
                 {{-- task id --}}
-                <input type="hidden" name="task_id" value="{{ Crypt::encrypt($task_id) }}">
+                <input type="hidden" name="task_id" value="{{ Crypt::encrypt($task->id) }}">
+
 
                 {{-- task name --}}
                 <div class="mb-3">
@@ -23,8 +23,8 @@
 
                 {{-- task description --}}
                 <div class="mb-3">
-                    <label class="form-label" for="text_task_description">Descrição da Tarefa</label>
-                    <textarea class="form-control" rows="5" id="text_task_description" name="text_task_description" placeholder="Descrição da Tarefa" required>{{old('text_task_description', $task->text_task_description)}}</textarea>
+                    <label for="text_task_description" class="form-label">Descrição da tarefa</label>
+                    <textarea name="text_task_description" id="text_task_description" class="form-control" rows="5" required>{{ old('text_task_description', $task->task_description) }}</textarea>
                     @error('text_task_description')
                         <div class="text-warning">{{ $errors->get('text_task_description')[0] }}</div>
                     @enderror
@@ -35,11 +35,14 @@
 
                     <label class="form-label" for="text_task_status">Status da Tarefa</label>
                     <select class="form-select w-25" id="text_task_status" name="text_task_status" required>
-                        <option value="new" {{}}>Nova</option>
-                        <option value="in_progress">Em Progresso</option>
-                        <option value="cancelled">Cancelada</option>
-                        <option value="completed">Concluída</option>
+                        <option value="new" {{old('text_task_status', $task->task_status) == 'new' ? 'selected':''}}>Nova</option>
+                        <option value="in_progress"  {{old('text_task_status', $task->task_status) == 'in_progress' ? 'selected':''}}>Em Progresso</option>
+                        <option value="cancelled"  {{old('text_task_status', $task->task_status) == 'cancelled' ? 'selected':''}}>Cancelada</option>
+                        <option value="completed"  {{old('text_task_status', $task->task_status) == 'completed' ? 'selected':''}}>Concluída</option>
                     </select>
+                    @error('text_task_status')
+                        <div class="text-warning">{{ $errors->get('text_task_status')[0] }}</div>
+                    @enderror
                   
                 </div>
 
