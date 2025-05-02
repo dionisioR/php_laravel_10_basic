@@ -39,5 +39,11 @@ Route::middleware("CheckLogin")->group(function () {
 
     // Tasks - delete
     Route::get('/delete_task/{id}', [Main::class, 'delete_task'])->name('delete_task');
-    Route::post('/delete_task_confirm/{id}', [Main::class, 'delete_task_submit'])->name('delete_task_submit');
+    Route::get('/delete_task_confirm/{id}', [Main::class, 'delete_task_confirm'])->name('delete_task_confirm');
+    
+    // search
+    Route::post('/search_submit', [Main::class, 'search_submit'])->name('search_submit');
+
+    // filter
+    Route::get('/filter/{filter}', [Main::class, 'filter'])->name('filter');
 });
